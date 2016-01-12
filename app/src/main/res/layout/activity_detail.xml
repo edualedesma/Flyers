@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -10,22 +12,15 @@
 
         <TextView
             android:id="@+id/lblTitle"
-            android:text="Hello World!"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btnTitle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblTitle"
-            android:text="@string/title" />
 
         <ImageView
             android:id="@+id/banner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/btnTitle"/>
+            android:layout_below="@id/lblTitle"/>
 
         <TextView
             android:id="@+id/address"
@@ -57,6 +52,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/cup"/>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vip"
+            android:text="@string/back"/>
 
+    </LinearLayout>
 </LinearLayout>

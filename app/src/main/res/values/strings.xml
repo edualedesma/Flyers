@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Flyers</string>
-
     <string name="title">Title</string>
+    <string name="back">Back</string>
 </resources>

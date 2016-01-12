@@ -1,6 +1,7 @@
 package com.edu.flyers;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 
 /**
@@ -27,7 +28,7 @@ public class DetailActivity extends AppCompatActivity {
     private int VIPPRICE = 27;
     ProgressDialog mProgressDialog;
     String url = "http://www.discotecasgratis.com/";
-    private String[] discos;
+    private String disco;
 
     //private String titleText = "";
     //ProgressDialog mProgressDialog;
@@ -42,22 +43,24 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        discos = new String[]{"Palace"};
+        Button btnBack = (Button)findViewById(R.id.btnBack);
 
-        // Get html from website
-        //soupRequest();
-        //downloadThread.start();
-        //TextView title = (TextView)findViewById(R.id.lblTitle);
-        //title.setText(titleText);
-        // Locate the Buttons in activity_main.xml
-        Button btnTitle = (Button) findViewById(R.id.btnTitle);
+        Bundle extras= getIntent().getExtras();
+        if (getIntent().hasExtra("name") ) {
+            disco = extras.getString("name");
 
-        btnTitle.setOnClickListener(new View.OnClickListener() {
+            Toast.makeText(getApplicationContext(),
+                    "Disco: " + disco, Toast.LENGTH_LONG)
+                    .show();
+        }
+
+        // Execute Title AsyncTask
+        new Title().execute();
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Execute Title AsyncTask
-                new Title().execute();
-
+                finish();
             }
         });
 
@@ -77,7 +80,7 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(DetailActivity.this);
-            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
+            mProgressDialog.setTitle("Disco data");
             mProgressDialog.setMessage("Loading...");
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.show();
@@ -87,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             try {
                 // Connect to the web site
-                Document doc = Jsoup.connect(url + discos[0]).get();
+                Document doc = Jsoup.connect(url + disco).get();
                 // Get the html document title
                 System.out.println("My document is: " + doc);
                 Elements data = doc.select("td");
