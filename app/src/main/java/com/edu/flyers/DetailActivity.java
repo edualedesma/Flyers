@@ -1,7 +1,9 @@
 package com.edu.flyers;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,17 +30,13 @@ public class DetailActivity extends AppCompatActivity {
     private int PARKING = 23;
     private int CUPPRICE = 25;
     private int VIPPRICE = 27;
+    private int DESCRIPTION = 30;
+
     ProgressDialog mProgressDialog;
-    String url = "http://www.discotecasgratis.com/";
+    private String url = "http://www.discotecasgratis.com/";
     private String disco;
 
-    //private String titleText = "";
-    //ProgressDialog mProgressDialog;
-    //String url = "http://www.androidbegin.com";
-    //String url = "http://www.discotecasgratis.com/";
-    //String url = "http://www.discotecasgratis.com/pases-y-flyers-Velvet";
-    //String url = "http://www.discotecasgratis.com/Velvet";
-    //String url = "http://www.discotecasgratis.com/#buscador";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         Button btnBack = (Button)findViewById(R.id.btnBack);
+        Button btnGoToMap = (Button)findViewById(R.id.btnGoTo);
 
         Bundle extras= getIntent().getExtras();
         if (getIntent().hasExtra("name") ) {
@@ -64,6 +65,59 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+        btnGoToMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String address = "";
+                TextView txtAddress = (TextView)findViewById(R.id.address);
+                address = txtAddress.getText().toString();
+
+                //Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4192?q=" + Uri.encode("1st & Pike, Seattle"));
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + address + Uri.encode(disco));
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),
+                            "No hay app instalada", Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+        });
+
+        // get context
+        context = getApplicationContext();
+    }
+
+    private String cleanDetailSection(String param) {
+        if (param != "") {
+            param = param.replaceAll("\\<td\\>", "").replaceAll("\\</td\\>", "");
+        }
+        return param;
+    }
+
+    private String cupFormatTransform(String param) {
+        return param.replaceAll("e", "€");
+    }
+
+    private String vipFormatTransform(String param) {
+        return param.replaceAll("\\<td valign=\"bottom\"\\>", "");
+    }
+
+    private String cleanDescriptionSection(String desc) {
+        String finalBoldPattern = "</b>";
+        desc = desc.replaceAll("\\<p\\>", "").replaceAll("\\</p\\>", "")
+                   .replaceAll("\\<div style=\"text-justify: newspaper; text-align: justify\">", "")
+                   .replaceAll("\\</div\\>", "");
+        System.out.println("Quitar texto");
+
+        for (int i = -1; (i = desc.indexOf(finalBoldPattern, i + 1)) != -1; ) {
+            desc = desc.replaceAll("(\\<b\\>).*(\\<\\/b\\>)", "");
+        }
+
+        return desc;
     }
 
     // Title AsyncTask
@@ -75,12 +129,13 @@ public class DetailActivity extends AppCompatActivity {
         String bannerUrl = "";
         String cupPrice = "";
         String vipPrice = "";
+        String description = "";
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(DetailActivity.this);
-            mProgressDialog.setTitle("Disco data");
+            mProgressDialog.setTitle("Flyers");
             mProgressDialog.setMessage("Loading...");
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.show();
@@ -89,22 +144,25 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                // Connect to the web site
+                // Connect to the web site and get the html document title
                 Document doc = Jsoup.connect(url + disco).get();
-                // Get the html document title
                 System.out.println("My document is: " + doc);
+
                 Elements data = doc.select("td");
                 Elements srcBanner = doc.select("img[class=logotipos]");
-                //System.out.println("My banner is: " + srcBanner.attr("src"));
-                //getURLBanner(srcBanner);
-                //System.out.println("My data is: " + data.eq(METRO));
+                Elements desc = doc.select("div");
+
                 title = doc.title();
-                address = data.eq(ADDRESS).toString();
-                metro = data.eq(METRO).toString();
-                parking = data.eq(PARKING).toString();
+                address = cleanDetailSection(data.eq(ADDRESS).toString());
+                metro = cleanDetailSection(data.eq(METRO).toString());
+                parking = cleanDetailSection(data.eq(PARKING).toString());
                 bannerUrl = url + srcBanner.attr("src");
-                cupPrice = data.eq(CUPPRICE).toString();
-                vipPrice = data.eq(VIPPRICE).toString();
+                // Transform if url address has spaces
+                bannerUrl = bannerUrl.replaceAll(" ", "%20");
+                cupPrice = cupFormatTransform(cleanDetailSection(data.eq(CUPPRICE).toString()));
+                vipPrice = vipFormatTransform(cleanDetailSection(data.eq(VIPPRICE).toString()));
+
+                description = cleanDescriptionSection(desc.eq(DESCRIPTION).toString());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,7 +175,14 @@ public class DetailActivity extends AppCompatActivity {
             // Set title into TextView
             TextView txtTitle = (TextView)findViewById(R.id.lblTitle);
             txtTitle.setText(title);
+
+            // Load image
             ImageView imgBanner = (ImageView)findViewById(R.id.banner);
+            Picasso.with(context)
+                    .load(bannerUrl)
+                    .resize(300, 250)
+                    .into(imgBanner);
+            System.out.println("Mi url es: " + bannerUrl); // TODO: Quit one quote in bannerUrl
 
             TextView txtAddress = (TextView)findViewById(R.id.address);
             txtAddress.setText(address);
@@ -129,35 +194,10 @@ public class DetailActivity extends AppCompatActivity {
             txtCup.setText(cupPrice);
             TextView txtVip = (TextView)findViewById(R.id.vip);
             txtVip.setText(vipPrice);
+            TextView txtDescription = (TextView)findViewById(R.id.description);
+            txtDescription.setText(description);
 
             mProgressDialog.dismiss();
         }
     }
-
-    /*public void soupRequest() {
-        Document doc = null;
-        try {
-            doc = Jsoup.connect("http://en.wikipedia.org/").get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Elements newsHeadlines = doc.select("#mp-itn b a");
-
-        System.out.println(newsHeadlines.size());
-    }*/
-
-    /*Thread downloadThread = new Thread() {
-        public void run() {
-            System.out.println("Starting with the thread...");
-            Document doc;
-            try {
-                doc = Jsoup.connect("http://google.es/").get();
-                //String title = doc.title();
-                titleText = doc.title();
-                System.out.print("My title is " + titleText);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    };*/
 }
