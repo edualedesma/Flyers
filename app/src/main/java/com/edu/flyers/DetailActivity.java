@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,6 +26,8 @@ import java.io.IOException;
  */
 public class DetailActivity extends AppCompatActivity {
 
+    final static String TAG = DetailActivity.class.getSimpleName();
+
     private int ADDRESS = 9;
     private int METRO = 13;
     private int PARKING = 23;
@@ -42,6 +45,18 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        String yourText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+                "Ut volutpat interdum interdum. Nulla laoreet lacus diam, vitae " +
+                "sodales sapien commodo faucibus. Vestibulum et feugiat enim. Donec " +
+                "semper mi et euismod tempor. Sed sodales eleifend mi id varius. Nam " +
+                "et ornare enim, sit amet gravida sapien. Quisque gravida et enim vel " +
+                "volutpat. Vivamus egestas ut felis a blandit. Vivamus fringilla " +
+                "dignissim mollis. Maecenas imperdiet interdum hendrerit. Aliquam" +
+                " dictum hendrerit ultrices. Ut vitae vestibulum dolor. Donec auctor ante" +
+                " eget libero molestie porta. Nam tempor fringilla ultricies. Nam sem " +
+                "lectus, feugiat eget ullamcorper vitae, ornare et sem. Fusce dapibus ipsum" +
+                " sed laoreet suscipit. ";
 
         Button btnBack = (Button)findViewById(R.id.btnBack);
         Button btnGoToMap = (Button)findViewById(R.id.btnGoTo);
@@ -81,7 +96,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(getApplicationContext(),
-                            "No hay app instalada", Toast.LENGTH_LONG)
+                            "There is no Map App installed.", Toast.LENGTH_LONG)
                             .show();
                 }
             }
@@ -111,7 +126,6 @@ public class DetailActivity extends AppCompatActivity {
         desc = desc.replaceAll("\\<p\\>", "").replaceAll("\\</p\\>", "")
                    .replaceAll("\\<div style=\"text-justify: newspaper; text-align: justify\">", "")
                    .replaceAll("\\</div\\>", "");
-        System.out.println("Quitar texto");
 
         for (int i = -1; (i = desc.indexOf(finalBoldPattern, i + 1)) != -1; ) {
             desc = desc.replaceAll("(\\<b\\>).*(\\<\\/b\\>)", "");
@@ -146,7 +160,8 @@ public class DetailActivity extends AppCompatActivity {
             try {
                 // Connect to the web site and get the html document title
                 Document doc = Jsoup.connect(url + disco).get();
-                System.out.println("My document is: " + doc);
+                System.out.println(TAG);
+                Log.d(TAG, "My document is " + doc);
 
                 Elements data = doc.select("td");
                 Elements srcBanner = doc.select("img[class=logotipos]");
@@ -194,8 +209,8 @@ public class DetailActivity extends AppCompatActivity {
             txtCup.setText(cupPrice);
             TextView txtVip = (TextView)findViewById(R.id.vip);
             txtVip.setText(vipPrice);
-            TextView txtDescription = (TextView)findViewById(R.id.description);
-            txtDescription.setText(description);
+            ExpandableTextView expandableDescription = (ExpandableTextView)findViewById(R.id.description);
+            expandableDescription.setText(description);
 
             mProgressDialog.dismiss();
         }
