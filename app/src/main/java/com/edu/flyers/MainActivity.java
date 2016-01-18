@@ -22,11 +22,13 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        discos = new String[]{"Palace",
-                "Shoko",
-                "Hotel-Puerta-America",
-                "Kapital",
-                "Faena"};
+        discos = new String[]{
+                "Palace","Shoko","Hotel-Puerta-America","Kapital","Faena","Moss-Madrid","Lab",
+                "Joy-Eslava","Terraza-D-Gree","New-Garamond","Garamond","Sala-Heineken","Tartufo",
+                "Ten","Macumba","Studio-12","Manhattan","Coco","Mondo","Moon-Dance","Velvet",
+                "Larios-Cafe","Goya-43","Panorama","Reina-Bruja","Copernico","Penelope","Inn",
+                "Mansion","Rumba-salsa","Rumba-Fun-Session","Lemon","Rumba-Society","New-Princess",
+                "Kupula","Banloo","Lolita","Teatro-Bodevil","Paddock"};
 
         // Get ListView object from xml
         discoListView = getListView();
