@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">Flyers</string>
     <string name="title">Title</string>
-    <string name="back">Back</string>
+
+    <!-- DETAIL ACTIVITY -->
+    <string name="txtCup">Copa:&#160;</string>
+    <string name="txtVipBottle">Botella VIP:&#160;</string>
+    <string name="txtParking">Aparcacoches:&#160;</string>
+    <string name="btnMap">Ir al mapa</string>
+    <string name="btnFlyers">Ver flyers</string>
+    <string name="btnBack">Volver</string>
+
+    <!-- FLYERS ACTIVITY -->
+    <string name="noImagesInfo">No hay flyers asociados.</string>
 </resources>

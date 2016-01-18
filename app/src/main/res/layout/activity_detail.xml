@@ -29,7 +29,7 @@
                     android:id="@+id/banner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin"/>
+                    android:layout_margin="@dimen/detail_activity_banner_margin"/>
 
                 <LinearLayout
                     android:id="@+id/linearAddress"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_toRightOf="@id/banner"
-                    android:layout_margin="@dimen/activity_horizontal_margin">
+                    android:layout_margin="@dimen/detail_activity_banner_margin">
 
                     <TextView
                         android:id="@+id/address"
@@ -57,7 +57,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Parking: "/>
+                            android:text="@string/txtParking"/>
 
                         <TextView
                             android:id="@+id/parking"
@@ -83,7 +83,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cup: "/>
+                    android:text="@string/txtCup"/>
 
                 <TextView
                     android:id="@+id/cup"
@@ -101,7 +101,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VIP bottle: "/>
+                    android:text="@string/txtVipBottle"/>
 
                 <TextView
                     android:id="@+id/vip"
@@ -115,14 +115,19 @@
                 android:id="@+id/btnGoTo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Go to map"/>
+                android:text="@string/btnMap"/>
+
+            <Button
+                android:id="@+id/btnFlyers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btnFlyers"/>
 
             <Button
                 android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/vip"
-                android:text="@string/back"/>
+                android:text="@string/btnBack"/>
 
         </LinearLayout>
 

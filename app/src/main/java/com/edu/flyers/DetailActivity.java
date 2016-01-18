@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * Created by Eduardo Acuña on 12/1/16.
@@ -39,6 +42,9 @@ public class DetailActivity extends AppCompatActivity {
     private String url = "http://www.discotecasgratis.com/";
     private String disco;
 
+    private String urlFlyers = "http://www.discotecasgratis.com/pases-y-flyers-";
+    ArrayList<String> flyersSrc;
+
     private Context context;
 
     @Override
@@ -46,24 +52,15 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        String yourText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                "Ut volutpat interdum interdum. Nulla laoreet lacus diam, vitae " +
-                "sodales sapien commodo faucibus. Vestibulum et feugiat enim. Donec " +
-                "semper mi et euismod tempor. Sed sodales eleifend mi id varius. Nam " +
-                "et ornare enim, sit amet gravida sapien. Quisque gravida et enim vel " +
-                "volutpat. Vivamus egestas ut felis a blandit. Vivamus fringilla " +
-                "dignissim mollis. Maecenas imperdiet interdum hendrerit. Aliquam" +
-                " dictum hendrerit ultrices. Ut vitae vestibulum dolor. Donec auctor ante" +
-                " eget libero molestie porta. Nam tempor fringilla ultricies. Nam sem " +
-                "lectus, feugiat eget ullamcorper vitae, ornare et sem. Fusce dapibus ipsum" +
-                " sed laoreet suscipit. ";
-
         Button btnBack = (Button)findViewById(R.id.btnBack);
         Button btnGoToMap = (Button)findViewById(R.id.btnGoTo);
+        Button btnFlyers = (Button)findViewById(R.id.btnFlyers);
 
         Bundle extras= getIntent().getExtras();
         if (getIntent().hasExtra("name") ) {
             disco = extras.getString("name");
+
+            urlFlyers = urlFlyers + disco;
 
             Toast.makeText(getApplicationContext(),
                     "Disco: " + disco, Toast.LENGTH_LONG)
@@ -73,6 +70,7 @@ public class DetailActivity extends AppCompatActivity {
         // Execute Title AsyncTask
         new Title().execute();
 
+        // Back button to return to main activity
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +78,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+        // Button to visit de specific address in the map app.
         btnGoToMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +86,6 @@ public class DetailActivity extends AppCompatActivity {
                 TextView txtAddress = (TextView)findViewById(R.id.address);
                 address = txtAddress.getText().toString();
 
-                //Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4192?q=" + Uri.encode("1st & Pike, Seattle"));
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + address + Uri.encode(disco));
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -99,6 +97,18 @@ public class DetailActivity extends AppCompatActivity {
                             "There is no Map App installed.", Toast.LENGTH_LONG)
                             .show();
                 }
+            }
+        });
+
+        // Button to view the disco flyers
+        btnFlyers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Send data to FlyersActivity
+                Intent i = new Intent(getApplicationContext(), FlyersActivity.class);
+                i.putExtra("flyers", flyersSrc);
+                // Go to FlyersActivity
+                startActivityForResult(i, 1);
             }
         });
 
@@ -158,9 +168,8 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                // Connect to the web site and get the html document title
+                // Connect to the web site and get the html document
                 Document doc = Jsoup.connect(url + disco).get();
-                System.out.println(TAG);
                 Log.d(TAG, "My document is " + doc);
 
                 Elements data = doc.select("td");
@@ -179,6 +188,26 @@ public class DetailActivity extends AppCompatActivity {
 
                 description = cleanDescriptionSection(desc.eq(DESCRIPTION).toString());
 
+                // Get flyers form specific disco
+                Document docFlyers = Jsoup.connect(urlFlyers)
+                        .header("Accept-Encoding", "gzip, deflate")
+                        .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0")
+                        .maxBodySize(0)
+                        .timeout(600000)
+                        .get();
+
+                Elements imgFlyers = docFlyers.select("img[class=pasesyflyers]");
+                if (!imgFlyers.isEmpty()) {
+                    Log.d(TAG, "There are images.");
+                    flyersSrc = new ArrayList<String>();
+                    for (int i=0; i<imgFlyers.size(); i++) {
+                        flyersSrc.add(url + imgFlyers.eq(i).attr("src"));
+                    }
+                }
+                else {
+                    Log.d(TAG, "There aren't images.");
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -195,7 +224,7 @@ public class DetailActivity extends AppCompatActivity {
             ImageView imgBanner = (ImageView)findViewById(R.id.banner);
             Picasso.with(context)
                     .load(bannerUrl)
-                    .resize(300, 250)
+                    .resize(400, 350)
                     .into(imgBanner);
             System.out.println("Mi url es: " + bannerUrl); // TODO: Quit one quote in bannerUrl
 
