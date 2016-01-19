@@ -24,7 +24,7 @@ public class MainActivity extends ListActivity {
 
         discos = new String[]{
                 "Palace","Shoko","Hotel-Puerta-America","Kapital","Faena","Moss-Madrid","Lab",
-                "Joy-Eslava","Terraza-D-Gree","New-Garamond","Garamond","Sala-Heineken","Tartufo",
+                "Joy-Eslava","Terraza-D-Green","New-Garamond","Garamond","Sala-Heineken","Tartufo",
                 "Ten","Macumba","Studio-12","Manhattan","Coco","Mondo","Moon-Dance","Velvet",
                 "Larios-Cafe","Goya-43","Panorama","Reina-Bruja","Copernico","Penelope","Inn",
                 "Mansion","Rumba-salsa","Rumba-Fun-Session","Lemon","Rumba-Society","New-Princess",
@@ -50,9 +50,9 @@ public class MainActivity extends ListActivity {
                 String itemValue = (String) discoListView.getItemAtPosition(position);
 
                 // Show alert
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         "Position: " + itemPosition + " ListItem: " + itemValue, Toast.LENGTH_LONG)
-                        .show();
+                        .show();*/
 
                 // Send data to DetailActivity
                 Intent i = new Intent(getApplicationContext(), DetailActivity.class);

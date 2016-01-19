@@ -1,12 +1,11 @@
 package com.edu.flyers;
 
-import android.content.res.ColorStateList;
-import android.widget.TextView;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by edualedesma on 16/1/16.

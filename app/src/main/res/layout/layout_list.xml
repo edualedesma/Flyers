@@ -8,6 +8,17 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp" >
 
+        <ImageView
+            android:id="@+id/item_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/glass" />
+
         <TextView
             android:id="@+id/discoName"
             android:layout_width="match_parent"
@@ -17,7 +28,7 @@
             android:layout_marginTop="5dp"
             android:hint="Disco name"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/holo_orange_dark" />
+            android:textColor="@color/colorItems" />
 
     </LinearLayout>
 

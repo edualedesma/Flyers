@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,14 +13,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -62,9 +58,9 @@ public class DetailActivity extends AppCompatActivity {
 
             urlFlyers = urlFlyers + disco;
 
-            Toast.makeText(getApplicationContext(),
+            /*Toast.makeText(getApplicationContext(),
                     "Disco: " + disco, Toast.LENGTH_LONG)
-                    .show();
+                    .show();*/
         }
 
         // Execute Title AsyncTask
@@ -226,7 +222,7 @@ public class DetailActivity extends AppCompatActivity {
                     .load(bannerUrl)
                     .resize(400, 350)
                     .into(imgBanner);
-            System.out.println("Mi url es: " + bannerUrl); // TODO: Quit one quote in bannerUrl
+            Log.d(TAG, "Mi url es: " + bannerUrl); // TODO: Quit one quote in bannerUrl
 
             TextView txtAddress = (TextView)findViewById(R.id.address);
             txtAddress.setText(address);

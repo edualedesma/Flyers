@@ -3,7 +3,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- MAIN ACTIVITY -->
+    <dimen name="mainTitleTextSize">32sp</dimen>
+
     <!-- DETAIL ACTIVITY -->
     <dimen name="detail_activity_banner_margin">10dp</dimen>
+    <dimen name="detailTitleTextSize">20sp</dimen>
 
 </resources>

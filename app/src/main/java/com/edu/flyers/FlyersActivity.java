@@ -1,21 +1,18 @@
 package com.edu.flyers;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 /**
@@ -26,7 +23,6 @@ public class FlyersActivity extends AppCompatActivity {
     final static String TAG = FlyersActivity.class.getSimpleName();
 
     private ArrayList<String> flyers;
-
     private Context context;
 
     @Override
@@ -48,6 +44,7 @@ public class FlyersActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             lp.gravity = Gravity.CENTER;
+            lp.bottomMargin = 20;
 
             // Check if that disco has flyers
             if (flyers != null) {
@@ -67,6 +64,11 @@ public class FlyersActivity extends AppCompatActivity {
             else {
                 // Show a message info in the Activity
                 TextView noImagesInfo = new TextView(this);
+
+                //noImagesInfo.setTextColor(getResources().getColor(R.color.colorBaseText, getTheme()));// API 23
+                noImagesInfo.setTextColor(Color.parseColor("#514F59"));
+                noImagesInfo.setTypeface(null, Typeface.BOLD);
+                noImagesInfo.setGravity(Gravity.CENTER);
                 noImagesInfo.setText(R.string.noImagesInfo);
                 ll.addView(noImagesInfo);
             }
