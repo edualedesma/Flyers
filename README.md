@@ -6,4 +6,4 @@ Flyers
 ###Description
 View ticket flyers to clubs, bars and discos as well as its location on a map.
 
-<img src="http://i.imgur.com/FqJF5ib.png" width="100">
+<img src="http://i.imgur.com/FqJF5ib.png" width="200">
