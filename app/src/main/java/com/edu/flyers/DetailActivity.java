@@ -82,6 +82,12 @@ public class DetailActivity extends AppCompatActivity {
                 TextView txtAddress = (TextView)findViewById(R.id.address);
                 address = txtAddress.getText().toString();
 
+                // Go to MapsActivity
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                i.putExtra("address", address);
+                startActivityForResult(i, 1);
+
+                /*
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + address + Uri.encode(disco));
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -92,7 +98,7 @@ public class DetailActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),
                             "There is no Map App installed.", Toast.LENGTH_LONG)
                             .show();
-                }
+                }*/
             }
         });
 
