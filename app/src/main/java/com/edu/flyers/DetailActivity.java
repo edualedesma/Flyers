@@ -84,7 +84,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 // Go to MapsActivity
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                i.putExtra("address", address);
+                i.putExtra("address", address + " Madrid");
                 startActivityForResult(i, 1);
 
                 /*

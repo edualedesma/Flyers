@@ -30,4 +30,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.glassfish:javax.annotation:+'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 }

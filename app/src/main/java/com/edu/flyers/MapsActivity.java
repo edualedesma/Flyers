@@ -4,12 +4,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,14 +21,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.ui.IconGenerator;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -89,9 +90,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
     }
 
     @Override
@@ -125,40 +126,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //mMap.addMarker(new MarkerOptions().position(myLocation).title("Mi ubicación"));
             mMap.setMyLocationEnabled(true);
             //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 17));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 20));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
             //Location.distanceBetween(mLatitude, mLongitude, -10, 50);
-
-            /*Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            try {
-                addressesOrigin = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-                addressesDestination = geocoder.getFromLocationName(address, 1);
-                Log.d("MapsActivity", "Mi destino es: " + addressesDestination.get(0).toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
 
             PeticionesRestAPI peticiones = RutaRestAdapter.getInstanced().create(PeticionesRestAPI.class);
 
-            String origen = mLatitude + "," + mLongitude;
-
-            ;
+            final String origen = mLatitude + "," + mLongitude;
 
             peticiones.rutaAsync(origen, address, "now", "car", new Callback<Ruta>() {
                 @Override
                 public void success(Ruta ruta, Response response) {
-                    Log.d("MapsActivity", ruta.getRoutes().get(0).getLegs().get(0).getEndAddress());
-                    Polyline line;
-                    for (int i=0; i<ruta.getRoutes().get(0).getLegs().get(0).getSteps().size(); i++) {
+                    Log.d("MapsActivity", ruta.getStatus());
 
-                        line = mMap.addPolyline(new PolylineOptions()
-                                .add(new LatLng(ruta.getRoutes().get(0).getLegs().get(0).getSteps().get(i).getStartLocation().getLat(),
-                                                ruta.getRoutes().get(0).getLegs().get(0).getSteps().get(i).getStartLocation().getLng()),
-                                     new LatLng(ruta.getRoutes().get(0).getLegs().get(0).getSteps().get(i).getEndLocation().getLat(),
-                                                ruta.getRoutes().get(0).getLegs().get(0).getSteps().get(i).getEndLocation().getLng()))
-                                .width(8)
-                                .color(Color.BLUE));
+                    if (ruta.getRoutes().size() > 0) {
+
+                        int stepsSize = ruta.getRoutes().get(0).getLegs().get(0).getSteps().size();
+
+                        // Get polyline from steps
+                        ArrayList<String> polylineList = new ArrayList<String>();
+                        for (int i = 0; i < stepsSize; i++) {
+                            polylineList.add(ruta.getRoutes().get(0).getLegs().get(0).getSteps().get(i).getPolyline().getPoints());
+                        }
+
+                        Polyline polyline;
+                        PolylineOptions line = new PolylineOptions().width(8)
+                                                                        .color(Color.BLUE);
+
+                        IconGenerator iconFactory = new IconGenerator(getBaseContext());
+
+                        ArrayList<LatLng> listaLL = new ArrayList<LatLng>();
+                        for (int i = 0; i < polylineList.size(); i++) {
+                            listaLL = (ArrayList<LatLng>) PolyUtil.decode(polylineList.get(i));
+                            if (i == 0) {
+                                addIcon(iconFactory, "Origen", listaLL.get(i));
+                            }
+                            for (int j = 0; j < listaLL.size(); j++) {
+                                line.add(listaLL.get(j));
+                            }
+                        }
+
+                        addIcon(iconFactory, "Destino", listaLL.get(listaLL.size()-1));
+
+                        polyline = mMap.addPolyline(line);
                     }
-
                 }
 
                 @Override
@@ -166,11 +176,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d("MapsActivity", "Ha fallado la petición a la API");
                 }
             });
-
-
-
         }
+    }
 
+    private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
+        MarkerOptions markerOptions = new MarkerOptions().
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
+                position(position).
+                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+
+        mMap.addMarker(markerOptions);
     }
 
     @Override
